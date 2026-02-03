@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern Warships Wordle</title>
+
+<style>
+body {
+  background-color: #0b1a2a;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+
+.game-box {
+  margin-bottom: 30px;
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.input-box {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+input#guessInput {
+  padding: 10px;
+  font-size: 16px;
+  width: 220px;
+  border: 2px solid #555;
+  border-radius: 5px;
+  background-color: #1b2b3a;
+  color: white;
+  outline: none;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  background-color: #3a7bd5;
+  color: white;
+}
+
+button:hover {
+  background-color: #5590e0;
+}
+
+.autocomplete-suggestions {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  right: 0;
+  background: #1b2b3a;
+  border: 1px solid #555;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+  display: none;
+}
+
+.autocomplete-suggestion {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.autocomplete-suggestion:hover {
+  background-color: #3a7bd5;
+}
+
+table {
+  margin: 10px auto;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 2px;
+}
+
+.hint-square {
+  display: block;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  margin: 3px auto;
+  font-weight: bold;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.green { background-color: #6aaa64; }
+.red { background-color: #d9534f; }
+.orange { background-color: #f0ad4e; }
+
+.hint-icon {
+  font-size: 16px;
+}
+
+#history-labels {
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-box">
+  <h1>🚢 Modern Warships Wordle</h1>
+
+  <div class="input-box">
+    <input id="guessInput" placeholder="Введите корабль" autocomplete="off">
+    <button onclick="checkGuess()">Угадать</button>
+    <div id="suggestions" class="autocomplete-suggestions"></div>
+  </div>
+</div>
+
+<div id="history-labels">
+  Страна | Тир | Редкость | Тип | HP | Скорость | Маневренность | Обзор
+</div>
+
+<div id="history"></div>
+
+<script>
+const ships = [
+  { name: "Zumwalt", country: "USA", type: "Destroyer", tier: 10, rarity: "Epic", hp: 15500, speed: 30, maneuver: 85, view: 12 },
+  { name: "Gorshkov", country: "Russia", type: "Frigate", tier: 9, rarity: "Rare", hp: 12000, speed: 28, maneuver: 80, view: 11 },
+  { name: "Type 055", country: "China", type: "Destroyer", tier: 10, rarity: "Epic", hp: 16000, speed: 32, maneuver: 82, view: 12 }
+];
+
+const secretShip = ships[Math.floor(Math.random() * ships.length)];
+let history = [];
+const maxAttempts = 6;
+
+function makeSquare(value, correctValue, isNumeric = false) {
+  let color = "red";
+  let arrow = "";
+
+  if (value === correctValue) {
+    color = "green";
+  } else if (isNumeric) {
+    color = "orange";
+    arrow = value > correctValue ? "⬇️" : "⬆️";
+  }
+
+  return { color, value, arrow };
+}
+
+function checkGuess() {
+  if (history.length >= maxAttempts) {
+    alert("🚫 Попытки закончились");
+    return;
+  }
+
+  const input = document.getElementById("guessInput");
+  const guess = input.value.trim();
+  const ship = ships.find(s => s.name.toLowerCase() === guess.toLowerCase());
+
+  if (!ship) {
+    alert("Корабль не найден");
+    return;
+  }
+
+  const cells = [
+    makeSquare(ship.country, secretShip.country),
+    makeSquare(ship.tier, secretShip.tier, true),
+    makeSquare(ship.rarity, secretShip.rarity),
+    makeSquare(ship.type, secretShip.type),
+    makeSquare(ship.hp, secretShip.hp, true),
+    makeSquare(ship.speed, secretShip.speed, true),
+    makeSquare(ship.maneuver, secretShip.maneuver, true),
+    makeSquare(ship.view, secretShip.view, true)
+  ];
+
+  let html = "<table><tr>";
+  for (let c of cells) {
+    html += `
+      <td>
+        <div class="hint-square ${c.color}">${c.value}</div>
+        <div class="hint-icon">${c.arrow || (c.color === "green" ? "✅" : "❌")}</div>
+      </td>
+    `;
+  }
+  html += "</tr></table>";
+
+  history.push(html);
+  document.getElementById("history").innerHTML = history.join("");
+  input.value = "";
+  suggestions.style.display = "none";
+
+  if (ship.name === secretShip.name) {
+    alert("🎉 Ты угадал корабль!");
+  } else if (history.length === maxAttempts) {
+    alert(`⛔ Игра окончена! Корабль был: ${secretShip.name}`);
+  }
+}
+
+// Автодополнение
+const input = document.getElementById("guessInput");
+const suggestions = document.getElementById("suggestions");
+
+input.addEventListener("input", () => {
+  const val = input.value.toLowerCase();
+  suggestions.innerHTML = "";
+
+  if (!val) {
+    suggestions.style.display = "none";
+    return;
+  }
+
+  const matches = ships.filter(s => s.name.toLowerCase().startsWith(val));
+  if (!matches.length) {
+    suggestions.style.display = "none";
+    return;
+  }
+
+  suggestions.style.display = "block";
+  matches.forEach(s => {
+    const div = document.createElement("div");
+    div.textContent = s.name;
+    div.className = "autocomplete-suggestion";
+    div.onclick = () => {
+      input.value = s.name;
+      suggestions.style.display = "none";
+    };
+    suggestions.appendChild(div);
+  });
+});
+</script>
+
+</body>
+</html>
