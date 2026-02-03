@@ -5,50 +5,129 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Modern Warships Wordle</title>
 <style>
-body { background:#0b1a2a; color:white; font-family:Arial; text-align:center; padding:20px; }
-#title { font-size:24px; margin-bottom:5px; }
-.lang-select { position:absolute; top:20px; right:20px; }
-.lang-select button { margin-left:5px; padding:5px 10px; cursor:pointer; }
-#hintBtn { position:absolute; top:20px; left:20px; padding:5px 10px; cursor:pointer; }
-.input-box{ position:relative; display:inline-flex; gap:8px; margin-top:50px; }
-input{ padding:10px; width:220px; font-size:16px; border-radius:5px; border:2px solid #555; background:#1b2b3a; color:white; }
-button{ padding:10px 20px; font-size:16px; border-radius:5px; border:none; cursor:pointer; background:#3a7bd5; color:white; }
-#playAgain{ display:none; margin-top:15px; }
-.autocomplete-suggestions{ position:absolute; top:50px; width:220px; background:#1b2b3a; border:1px solid #555; display:none; max-height:150px; overflow-y:auto; z-index:10; }
-.autocomplete-suggestion{ padding:8px; cursor:pointer; }
-.autocomplete-suggestion:hover{ background:#3a7bd5; }
-.hint-square{ width:75px; height:75px; border-radius:6px; margin:4px; font-size:14px; font-weight:bold; display:flex; align-items:center; justify-content:center; text-align:center; padding:4px; word-wrap:break-word; }
+body {
+  background:#0b1a2a;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+  padding:20px;
+  margin:0;
+}
+
+#title { font-size:24px; margin-bottom:10px; }
+
+.lang-select {
+  position:absolute;
+  top:10px;
+  right:10px;
+}
+
+.lang-btn {
+  padding:5px 10px;
+  background:#3a7bd5;
+  color:white;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+  font-weight:bold;
+}
+.lang-btn.active{background:#5590e0;}
+
+.input-box{
+  position:relative;
+  display:inline-flex;
+  gap:8px;
+  margin-top:20px;
+}
+
+input{
+  padding:10px;
+  width:220px;
+  font-size:16px;
+  border-radius:5px;
+  border:2px solid #555;
+  background:#1b2b3a;
+  color:white;
+}
+
+button{
+  padding:10px 20px;
+  font-size:16px;
+  border-radius:5px;
+  border:none;
+  cursor:pointer;
+  background:#3a7bd5;
+  color:white;
+}
+button:hover{background:#5590e0;}
+
+#playAgain{display:none;margin-top:15px;}
+#hintBtn{margin-top:10px;}
+#hintHistory{margin-top:10px;font-style:italic;color:#ccc;}
+.autocomplete-suggestions{
+  position:absolute;
+  top:45px;
+  width:220px;
+  background:#1b2b3a;
+  border:1px solid #555;
+  display:none;
+  max-height:150px;
+  overflow-y:auto;
+  z-index:10;
+}
+.autocomplete-suggestion{
+  padding:8px;
+  cursor:pointer;
+}
+.autocomplete-suggestion:hover{background:#5590e0;}
+
+.hint-square{
+  width:75px;
+  height:75px;
+  border-radius:6px;
+  margin:4px;
+  font-size:12px;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:4px;
+  word-wrap:break-word;
+}
 .green{background:#6aaa64;}
 .red{background:#d9534f;}
 .orange{background:#f0ad4e;}
 table{margin:10px auto;}
 #attempts{margin-top:10px;font-weight:bold;}
-#labels{margin-top:15px;margin-bottom:5px;}
+#history-labels{color:#ccc;margin-top:20px;font-size:14px;}
 </style>
 </head>
 <body>
 
 <h2 id="title">🚢 Modern Warships Wordle</h2>
-<button id="hintBtn">Подсказка (2x)</button>
+
+<button id="hintBtn">Подсказка (3)</button>
+<div id="hintHistory"></div>
 
 <div class="lang-select">
-  <button id="langRu">Русский</button>
-  <button id="langEn">English</button>
+<button class="lang-btn active" data-lang="ru">Русский</button>
+<button class="lang-btn" data-lang="en">English</button>
 </div>
 
 <div class="input-box">
-  <input id="guessInput" placeholder="Введите корабль">
-  <button id="guessBtn">Угадать</button>
-  <div id="suggestions" class="autocomplete-suggestions"></div>
+<input id="guessInput" placeholder="Введите корабль">
+<button id="guessBtn">Угадать</button>
+<div id="suggestions" class="autocomplete-suggestions"></div>
 </div>
 
 <div id="attempts"></div>
-<div id="labels"></div>
+<div id="history-labels">Страна | Тир | Редкость | Класс | HP | Скорость | Маневренность | Обзор</div>
 <div id="history"></div>
 <button id="playAgain">Играть снова</button>
 
 <script>
-// ----------------- ЯЗЫК -----------------
+// ---------------- ТЕКСТЫ ----------------
 const text = {
   ru:{
     guess:"Угадать",
@@ -58,14 +137,12 @@ const text = {
     lose:"⛔ Корабль был:",
     again:"Играть снова",
     notFound:"Корабль не найден",
-    labels:"Страна | Тир | Редкость | Тип | HP | Скорость | Маневренность | Обзор",
-    hintUsed:"Вы уже использовали все свои подсказки!",
-    hintWeak:"🔹 Слабая подсказка: размер корабля ~ ",
-    hintStrong:"✅ Подсказка: страна корабля — ",
-    countryName: { "USA":"США", "Russia":"Россия", "China":"Китай", "UK":"Великобритания", "Japan":"Япония", "Germany":"Германия", "France":"Франция", "Italy":"Италия", "Spain":"Испания", "India":"Индия" },
-    typeName: { "Destroyer":"Эсминец", "Frigate":"Фрегат", "Cruiser":"Крейсер", "Battleship":"Линкор", "Carrier":"Авианосец" },
-    rarityName: { "Epic":"Эпический", "Rare":"Редкий", "Common":"Обычный", "Legendary":"Легендарный" },
-    sizeName: { "Large":"Большой", "Medium":"Средний", "Small":"Малый" }
+    hintUsed:"Подсказки закончились!",
+    hintClass:"Класс: ",
+    hintCountry:"Страна: ",
+    hintTier:"Тир: ",
+    hintRarity:"Редкость: ",
+    labels:"Страна | Тир | Редкость | Класс | HP | Скорость | Маневренность | Обзор"
   },
   en:{
     guess:"Guess",
@@ -75,203 +152,153 @@ const text = {
     lose:"⛔ Ship was:",
     again:"Play again",
     notFound:"Ship not found",
-    labels:"Country | Tier | Rarity | Type | HP | Speed | Maneuver | View",
-    hintUsed:"You already used all your hints!",
-    hintWeak:"🔹 Weak hint: ship size ~ ",
-    hintStrong:"✅ Hint: Ship country — ",
-    countryName: { "USA":"USA", "Russia":"Russia", "China":"China", "UK":"UK", "Japan":"Japan", "Germany":"Germany", "France":"France", "Italy":"Italy", "Spain":"Spain", "India":"India" },
-    typeName: { "Destroyer":"Destroyer", "Frigate":"Frigate", "Cruiser":"Cruiser", "Battleship":"Battleship", "Carrier":"Carrier" },
-    rarityName: { "Epic":"Epic", "Rare":"Rare", "Common":"Common", "Legendary":"Legendary" },
-    sizeName: { "Large":"Large", "Medium":"Medium", "Small":"Small" }
+    hintUsed:"No hints left!",
+    hintClass:"Class: ",
+    hintCountry:"Country: ",
+    hintTier:"Tier: ",
+    hintRarity:"Rarity: ",
+    labels:"Country | Tier | Rarity | Class | HP | Speed | Maneuver | View"
   }
 };
+
 let lang="ru";
 
-// ----------------- ДАННЫЕ -----------------
+// ---------------- ДАННЫЕ КОРАБЛЕЙ ----------------
 const ships=[
-  { name:"Zumwalt", country:"USA", type:"Destroyer", tier:10, rarity:"Epic", hp:15500, speed:30, maneuver:85, view:12, size:"Large" },
-  { name:"Gorshkov", country:"Russia", type:"Frigate", tier:9, rarity:"Rare", hp:12000, speed:28, maneuver:80, view:11, size:"Medium" },
-  { name:"Type 055", country:"China", type:"Destroyer", tier:10, rarity:"Epic", hp:16000, speed:32, maneuver:82, view:12, size:"Large" },
-  { name:"Queen Elizabeth", country:"UK", type:"Battleship", tier:9, rarity:"Legendary", hp:17000, speed:30, maneuver:70, view:12, size:"Large" },
-  { name:"Yamato", country:"Japan", type:"Battleship", tier:10, rarity:"Legendary", hp:18000, speed:27, maneuver:65, view:12, size:"Large" },
-  { name:"Bismarck", country:"Germany", type:"Battleship", tier:9, rarity:"Epic", hp:16500, speed:28, maneuver:68, view:11, size:"Large" },
-  { name:"Charles de Gaulle", country:"France", type:"Carrier", tier:9, rarity:"Epic", hp:16000, speed:31, maneuver:75, view:11, size:"Large" },
-  { name:"Cavour", country:"Italy", type:"Carrier", tier:8, rarity:"Rare", hp:14500, speed:29, maneuver:73, view:10, size:"Large" },
-  { name:"Juan Carlos I", country:"Spain", type:"Carrier", tier:8, rarity:"Rare", hp:14000, speed:29, maneuver:72, view:10, size:"Large" },
-  { name:"INS Vikramaditya", country:"India", type:"Carrier", tier:9, rarity:"Epic", hp:15500, speed:30, maneuver:74, view:11, size:"Large" }
+  { name:"Zumwalt", country:{ru:"США",en:"USA"}, type:{ru:"Эсминец",en:"Destroyer"}, tier:10, rarity:{ru:"Эпический",en:"Epic"}, hp:15500, speed:30, maneuver:85, view:12 },
+  { name:"Gorshkov", country:{ru:"Россия",en:"Russia"}, type:{ru:"Фрегат",en:"Frigate"}, tier:9, rarity:{ru:"Редкий",en:"Rare"}, hp:12000, speed:28, maneuver:80, view:11 },
+  { name:"Type 055", country:{ru:"Китай",en:"China"}, type:{ru:"Эсминец",en:"Destroyer"}, tier:10, rarity:{ru:"Эпический",en:"Epic"}, hp:16000, speed:32, maneuver:82, view:12 },
+  { name:"Kirov", country:{ru:"Россия",en:"Russia"}, type:{ru:"Крейсер",en:"Cruiser"}, tier:8, rarity:{ru:"Редкий",en:"Rare"}, hp:18000, speed:31, maneuver:78, view:10 },
+  { name:"Iowa", country:{ru:"США",en:"USA"}, type:{ru:"Линкор",en:"Battleship"}, tier:9, rarity:{ru:"Эпический",en:"Epic"}, hp:27000, speed:28, maneuver:70, view:11 },
+  { name:"Hood", country:{ru:"Великобритания",en:"UK"}, type:{ru:"Линкор-крейсер",en:"Battlecruiser"}, tier:10, rarity:{ru:"Легендарный",en:"Legendary"}, hp:30000, speed:32, maneuver:72, view:12 },
+  { name:"Minsk", country:{ru:"Россия",en:"Russia"}, type:{ru:"Крейсер",en:"Cruiser"}, tier:8, rarity:{ru:"Редкий",en:"Rare"}, hp:16000, speed:29, maneuver:80, view:10 },
+  { name:"Yamato", country:{ru:"Япония",en:"Japan"}, type:{ru:"Линкор",en:"Battleship"}, tier:10, rarity:{ru:"Легендарный",en:"Legendary"}, hp:32000, speed:27, maneuver:65, view:11 },
+  { name:"Atago", country:{ru:"Япония",en:"Japan"}, type:{ru:"Крейсер",en:"Cruiser"}, tier:9, rarity:{ru:"Эпический",en:"Epic"}, hp:21000, speed:33, maneuver:75, view:11 },
+  { name:"Gearing", country:{ru:"США",en:"USA"}, type:{ru:"Эсминец",en:"Destroyer"}, tier:9, rarity:{ru:"Эпический",en:"Epic"}, hp:14000, speed:36, maneuver:88, view:12 }
 ];
 
 let secretShip;
 let history=[];
+let hintHistory=[];
 const maxAttempts=6;
-let hintStep=2;
-let gameOver=false;
+let hintsLeft=3;
 
-// ----------------- UI -----------------
+// ---------------- UI ----------------
 const guessInput=document.getElementById("guessInput");
 const guessBtn=document.getElementById("guessBtn");
 const suggestions=document.getElementById("suggestions");
 const historyDiv=document.getElementById("history");
 const attemptsDiv=document.getElementById("attempts");
 const playAgainBtn=document.getElementById("playAgain");
-const labelsDiv=document.getElementById("labels");
-const langRuBtn=document.getElementById("langRu");
-const langEnBtn=document.getElementById("langEn");
 const hintBtn=document.getElementById("hintBtn");
+const hintHistoryDiv=document.getElementById("hintHistory");
+const langButtons=document.querySelectorAll(".lang-btn");
+const historyLabels=document.getElementById("history-labels");
 
-// ----------------- ФУНКЦИИ -----------------
+// ---------------- ФУНКЦИИ ----------------
 function newGame(){
   secretShip=ships[Math.floor(Math.random()*ships.length)];
-  history=[];
-  historyDiv.innerHTML="";
+  history=[]; hintHistory=[]; historyDiv.innerHTML=""; hintHistoryDiv.innerHTML="";
+  hintsLeft=3; hintBtn.textContent=`${lang==="ru"?"Подсказка":"Hint"} (${hintsLeft})`;
   playAgainBtn.style.display="none";
-  hintStep=2;
-  gameOver=false;
-  guessInput.disabled=false;
-  guessBtn.disabled=false;
   updateAttempts();
-  updateLangUI();
+  updateHistoryLabels();
 }
 
-function updateLangUI(){
+function updateLang(){
+  langButtons.forEach(btn=>btn.classList.toggle("active", btn.dataset.lang===lang));
   guessBtn.textContent=text[lang].guess;
   guessInput.placeholder=text[lang].placeholder;
   playAgainBtn.textContent=text[lang].again;
-  labelsDiv.textContent=text[lang].labels;
+  hintBtn.textContent=`${lang==="ru"?"Подсказка":"Hint"} (${hintsLeft})`;
   updateAttempts();
-  hintBtn.textContent = hintStep>0 ? 
-    (lang==="ru"?"Подсказка (" + hintStep +"x)":"Hint ("+hintStep+"x)") : 
-    (lang==="ru"?"Подсказка (0x)":"Hint (0x)");
-  // обновляем историю при смене языка
+  updateHistoryLabels();
   renderHistory();
+  renderHints();
 }
 
 function updateAttempts(){
   attemptsDiv.textContent=`${text[lang].attempts}: ${maxAttempts-history.length}`;
 }
 
-function localizeShip(ship){
-  return {
-    name:ship.name,
-    country:text[lang].countryName[ship.country],
-    type:text[lang].typeName[ship.type],
-    rarity:text[lang].rarityName[ship.rarity],
-    tier:ship.tier,
-    hp:ship.hp,
-    speed:ship.speed,
-    maneuver:ship.maneuver,
-    view:ship.view,
-    size:text[lang].sizeName[ship.size]
-  };
+function updateHistoryLabels(){
+  historyLabels.textContent=text[lang].labels;
 }
 
-function makeSquare(v,c,num=false){
-  let color="red";
-  let arrow="";
-  if(v===c) color="green";
-  else if(num){ color="orange"; arrow=v>c?"⬇️":"⬆️"; }
-  return {value:v,color,arrow};
+function makeSquare(value, correctValue){
+  let color="red"; let arrow="";
+  if(value===correctValue) color="green";
+  else if(typeof value==="number"){ color="orange"; arrow=value>correctValue?"⬇️":"⬆️";}
+  return {value,color,arrow};
 }
 
-// ----------------- ИГРА -----------------
+// ---------------- ИГРА ----------------
 function checkGuess(){
-  if(gameOver) return;
+  if(history.length>=maxAttempts || playAgainBtn.style.display==="inline-block") return;
   const guess=guessInput.value.trim();
-  const shipRaw=ships.find(s=>s.name.toLowerCase()===guess.toLowerCase());
-  if(!shipRaw){ alert(text[lang].notFound); return; }
+  const ship=ships.find(s=>s.name.toLowerCase()===guess.toLowerCase());
+  if(!ship){alert(text[lang].notFound); return;}
 
-  const ship=localizeShip(shipRaw);
-  const secret=localizeShip(secretShip);
-
-  const cells=[
-    makeSquare(ship.country,secret.country),
-    makeSquare(ship.tier,secret.tier,true),
-    makeSquare(ship.rarity,secret.rarity),
-    makeSquare(ship.type,secret.type),
-    makeSquare(ship.hp,secret.hp,true),
-    makeSquare(ship.speed,secret.speed,true),
-    makeSquare(ship.maneuver,secret.maneuver,true),
-    makeSquare(ship.view,secret.view,true)
-  ];
-
-  let html="<table><tr>";
-  cells.forEach(c=>{
-    html+=`<td>
-      <div class="hint-square ${c.color}">${c.value}</div>
-      <div>${c.arrow || (c.color==="green"?"✅":"❌")}</div>
-    </td>`;
-  });
-  html+="</tr></table>";
-
-  history.push({ship:shipRaw,html:html});
+  // Сохраняем оригинальные данные в истории
+  history.push(ship);
   renderHistory();
 
-  guessInput.value="";
-  suggestions.style.display="none";
+  guessInput.value=""; suggestions.style.display="none";
   updateAttempts();
 
-  if(ship.name===secret.name){ 
-    alert(text[lang].win); 
-    gameOver=true;
-    guessInput.disabled=true;
-    guessBtn.disabled=true;
-    playAgainBtn.style.display="inline-block";
+  if(ship.name===secretShip.name){
+    alert(text[lang].win); playAgainBtn.style.display="inline-block";
   } else if(history.length===maxAttempts){
-    alert(text[lang].lose+" "+shipRaw.name); 
-    gameOver=true;
-    guessInput.disabled=true;
-    guessBtn.disabled=true;
-    playAgainBtn.style.display="inline-block";
+    alert(text[lang].lose+" "+secretShip.name); playAgainBtn.style.display="inline-block";
   }
 }
 
-// ----------------- ОТРИСОВКА ИСТОРИИ -----------------
 function renderHistory(){
-  let html = "";
-  history.forEach(entry=>{
-    const ship=localizeShip(entry.ship);
-    const secret=localizeShip(secretShip);
-    const cells=[
-      makeSquare(ship.country,secret.country),
-      makeSquare(ship.tier,secret.tier,true),
-      makeSquare(ship.rarity,secret.rarity),
-      makeSquare(ship.type,secret.type),
-      makeSquare(ship.hp,secret.hp,true),
-      makeSquare(ship.speed,secret.speed,true),
-      makeSquare(ship.maneuver,secret.maneuver,true),
-      makeSquare(ship.view,secret.view,true)
+  historyDiv.innerHTML=history.map(ship=>{
+    let cells=[
+      makeSquare(ship.country[lang], secretShip.country[lang]),
+      makeSquare(ship.tier, secretShip.tier),
+      makeSquare(ship.rarity[lang], secretShip.rarity[lang]),
+      makeSquare(ship.type[lang], secretShip.type[lang]),
+      makeSquare(ship.hp, secretShip.hp),
+      makeSquare(ship.speed, secretShip.speed),
+      makeSquare(ship.maneuver, secretShip.maneuver),
+      makeSquare(ship.view, secretShip.view)
     ];
-    let row="<table><tr>";
+    let html="<table><tr>";
     cells.forEach(c=>{
-      row+=`<td>
-        <div class="hint-square ${c.color}">${c.value}</div>
-        <div>${c.arrow || (c.color==="green"?"✅":"❌")}</div>
-      </td>`;
+      html+=`<td><div class="hint-square ${c.color}">${c.value}</div>
+      <div>${c.arrow || (c.color==="green"?"✅":"❌")}</div></td>`;
     });
-    row+="</tr></table>";
-    html+=row;
-  });
-  historyDiv.innerHTML=html;
+    html+="</tr></table>";
+    return html;
+  }).join("");
 }
 
-// ----------------- ПОДСКАЗКИ -----------------
-hintBtn.onclick = ()=>{
-  if(hintStep===0){ alert(text[lang].hintUsed); return; }
-  const secret=localizeShip(secretShip);
-  if(hintStep===2){
-    alert(text[lang].hintWeak + secret.size);
-  } else if(hintStep===1){
-    alert(text[lang].hintStrong + secret.country);
-  }
-  hintStep--;
-  updateLangUI();
+// ---------------- ПОДСКАЗКИ ----------------
+function giveHint(){
+  if(hintsLeft<=0){alert(text[lang].hintUsed); return;}
+  hintsLeft--; hintBtn.textContent=`${lang==="ru"?"Подсказка":"Hint"} (${hintsLeft})`;
+  let hintObj={};
+  if(hintsLeft===2) hintObj.type="class";
+  else if(hintsLeft===1) hintObj.type="country";
+  else if(hintsLeft===0) hintObj.type="tier";
+  hintHistory.push(hintObj);
+  renderHints();
 }
 
-// ----------------- АВТОДОПОЛНЕНИЕ -----------------
+function renderHints(){
+  hintHistoryDiv.innerHTML=hintHistory.map(h=>{
+    if(h.type==="class") return `${text[lang].hintClass}${secretShip.type[lang]}`;
+    if(h.type==="country") return `${text[lang].hintCountry}${secretShip.country[lang]}`;
+    if(h.type==="tier") return `${text[lang].hintTier}${secretShip.tier}, ${text[lang].hintRarity}${secretShip.rarity[lang]}`;
+  }).join("<br>");
+}
+
+// ---------------- АВТОДОПОЛНЕНИЕ ----------------
 guessInput.addEventListener("input",()=>{
   const val=guessInput.value.toLowerCase();
-  suggestions.innerHTML="";
-  if(!val){ suggestions.style.display="none"; return; }
+  suggestions.innerHTML=""; if(!val){ suggestions.style.display="none"; return; }
   const matches=ships.filter(s=>s.name.toLowerCase().startsWith(val));
   if(!matches.length){ suggestions.style.display="none"; return; }
   suggestions.style.display="block";
@@ -279,20 +306,25 @@ guessInput.addEventListener("input",()=>{
     const div=document.createElement("div");
     div.textContent=s.name;
     div.className="autocomplete-suggestion";
-    div.onclick=()=>{ guessInput.value=s.name; suggestions.style.display="none"; };
+    div.onclick=()=>{guessInput.value=s.name; suggestions.style.display="none";};
     suggestions.appendChild(div);
   });
 });
 
-// ----------------- СОБЫТИЯ -----------------
+// ---------------- СОБЫТИЯ ----------------
 guessBtn.onclick=checkGuess;
 playAgainBtn.onclick=newGame;
-langRuBtn.onclick=()=>{lang="ru"; updateLangUI();};
-langEnBtn.onclick=()=>{lang="en"; updateLangUI();};
+hintBtn.onclick=giveHint;
+langButtons.forEach(btn=>{
+  btn.onclick=()=>{
+    lang=btn.dataset.lang;
+    updateLang();
+  };
+});
 
-// ----------------- СТАРТ -----------------
+// ---------------- СТАРТ ----------------
 newGame();
-updateLangUI();
+updateLang();
 </script>
 </body>
 </html>
