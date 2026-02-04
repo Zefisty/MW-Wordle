@@ -103,7 +103,7 @@ input{
 }
 .grid{
   display:flex;
-  justify-content:center; /* равные отступы по центру */
+  justify-content:center;
   gap:6px; /* расстояние между квадратами */
 }
 
@@ -169,7 +169,7 @@ input{
   <div id="labels" class="grid"></div>
 
   <!-- Guess history -->
-  <div id="history" class="grid"></div>
+  <div id="history"></div>
 </div>
 
 <button id="playAgain">Играть снова</button>
@@ -219,10 +219,10 @@ const $=id=>document.getElementById(id);
 function render(){
 $("labels").innerHTML="";
 T[lang].labels.forEach(l=>{
-const d=document.createElement("div");
-d.className="square label";
-d.textContent=l;
-$("labels").appendChild(d);
+  const d=document.createElement("div");
+  d.className="square label";
+  d.textContent=l;
+  $("labels").appendChild(d);
 });
 
 $("attempts").textContent=T[lang].attempts+": "+attempts;
@@ -234,108 +234,108 @@ $("streak").textContent=T[lang].streak+": "+streak;
 // Render history
 $("history").innerHTML="";
 guesses.forEach(ship=>{
-const row=document.createElement("div");
-row.className="grid";
-[
-cmp(ship.country[lang],secret.country[lang]),
-cmp(ship.tier,secret.tier,true),
-cmp(ship.rarity[lang],secret.rarity[lang]),
-cmp(ship.class[lang],secret.class[lang]),
-cmp(ship.hp,secret.hp,true),
-cmp(ship.speed,secret.speed,true),
-cmp(ship.man,secret.man,true),
-cmp(ship.view,secret.view,true)
-].forEach(c=>{
-const col=document.createElement("div");
-col.className="col";
-col.innerHTML=`<div class="square ${c.col}">${c.v}</div><div class="icon">${c.i}</div>`;
-row.appendChild(col);
-});
-$("history").appendChild(row);
+  const row=document.createElement("div");
+  row.className="grid";
+  row.style.marginBottom="6px"; // расстояние между строками угадываний
+  [
+    cmp(ship.country[lang],secret.country[lang]),
+    cmp(ship.tier,secret.tier,true),
+    cmp(ship.rarity[lang],secret.rarity[lang]),
+    cmp(ship.class[lang],secret.class[lang]),
+    cmp(ship.hp,secret.hp,true),
+    cmp(ship.speed,secret.speed,true),
+    cmp(ship.man,secret.man,true),
+    cmp(ship.view,secret.view,true)
+  ].forEach(c=>{
+    const col=document.createElement("div");
+    col.className="col";
+    col.innerHTML=`<div class="square ${c.col}">${c.v}</div><div class="icon">${c.i}</div>`;
+    row.appendChild(col);
+  });
+  $("history").appendChild(row);
 });
 
 // Render hints
 $("hintHistory").innerHTML="";
 hintHistory.forEach(h=>{
-$("hintHistory").innerHTML+=`<div>${T[lang].hints[h]}: ${getHintValue(h)}</div>`;
+  $("hintHistory").innerHTML+=`<div>${T[lang].hints[h]}: ${getHintValue(h)}</div>`;
 });
 }
 
 function cmp(v,c,num=false){
-let col="red",i="❌";
-if(v===c){col="green";i="✅";}
-else if(num){col="orange";i=v>c?"⬇️":"⬆️";}
-return {v,col,i};
+  let col="red",i="❌";
+  if(v===c){col="green";i="✅";}
+  else if(num){col="orange";i=v>c?"⬇️":"⬆️";}
+  return {v,col,i};
 }
 
 function getHintValue(i){
-if(i===0)return secret.class[lang];
-if(i===1)return secret.rarity[lang];
-if(i===2)return secret.country[lang];
+  if(i===0)return secret.class[lang];
+  if(i===1)return secret.rarity[lang];
+  if(i===2)return secret.country[lang];
 }
 
 // Events
 $("guessBtn").onclick=()=>{
-if(attempts<=0)return;
-const name=$("guessInput").value.trim().toLowerCase();
-const ship=ships.find(s=>s.name.toLowerCase()===name);
-if(!ship)return;
+  if(attempts<=0)return;
+  const name=$("guessInput").value.trim().toLowerCase();
+  const ship=ships.find(s=>s.name.toLowerCase()===name);
+  if(!ship)return;
+  attempts--;
+  guesses.push(ship);
+  $("guessInput").value="";
+  $("auto").style.display="none";
 
-attempts--;
-guesses.push(ship);
-$("guessInput").value="";
-$("auto").style.display="none";
-
-if(ship.name===secret.name){
-alert(T[lang].win);
-streak++;localStorage.setItem("streak",streak);
-$("playAgain").style.display="inline-block";
-attempts=0;
-}else if(attempts===0){
-alert(T[lang].lose+" "+secret.name);
-streak=0;localStorage.setItem("streak",0);
-$("playAgain").style.display="inline-block";
-}
-render();
+  if(ship.name===secret.name){
+    alert(T[lang].win);
+    streak++;localStorage.setItem("streak",streak);
+    $("playAgain").style.display="inline-block";
+    attempts=0;
+  }else if(attempts===0){
+    alert(T[lang].lose+" "+secret.name);
+    streak=0;localStorage.setItem("streak",0);
+    $("playAgain").style.display="inline-block";
+  }
+  render();
 };
 
 $("hintBtn").onclick=()=>{
-if(hintsLeft<=0){alert(T[lang].noHints);return;}
-hintHistory.push(3-hintsLeft);
-hintsLeft--;
-render();
+  if(hintsLeft<=0){alert(T[lang].noHints);return;}
+  hintHistory.push(3-hintsLeft);
+  hintsLeft--;
+  render();
 };
 
 $("guessInput").oninput=()=>{
-const v=$("guessInput").value.toLowerCase();
-$("auto").innerHTML="";
-if(!v){$("auto").style.display="none";return;}
-ships.filter(s=>s.name.toLowerCase().startsWith(v)).forEach(s=>{
-const d=document.createElement("div");
-d.textContent=s.name;
-d.onclick=()=>{$("guessInput").value=s.name;$("auto").style.display="none";}
-$("auto").appendChild(d);
-});
-$("auto").style.display=$("auto").children.length?"block":"none";
+  const v=$("guessInput").value.toLowerCase();
+  $("auto").innerHTML="";
+  if(!v){$("auto").style.display="none";return;}
+  ships.filter(s=>s.name.toLowerCase().startsWith(v)).forEach(s=>{
+    const d=document.createElement("div");
+    d.textContent=s.name;
+    d.onclick=()=>{$("guessInput").value=s.name;$("auto").style.display="none";}
+    $("auto").appendChild(d);
+  });
+  $("auto").style.display=$("auto").children.length?"block":"none";
 };
 
 document.querySelectorAll(".lang button").forEach(b=>{
-b.onclick=()=>{
-document.querySelectorAll(".lang button").forEach(x=>x.classList.remove("active"));
-b.classList.add("active");
-lang=b.dataset.lang;
-render();
-};
+  b.onclick=()=>{
+    document.querySelectorAll(".lang button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    lang=b.dataset.lang;
+    render();
+  };
 });
 
 $("playAgain").onclick=start;
 
 function start(){
-secret=ships[Math.floor(Math.random()*ships.length)];
-attempts=6;hintsLeft=3;
-guesses=[];hintHistory=[];
-$("playAgain").style.display="none";
-render();
+  secret=ships[Math.floor(Math.random()*ships.length)];
+  attempts=6;hintsLeft=3;
+  guesses=[];hintHistory=[];
+  $("playAgain").style.display="none";
+  render();
 }
 
 start();
