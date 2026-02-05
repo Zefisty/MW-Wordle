@@ -5,163 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Modern Warships Wordle</title>
 <style>
-body{
-  background:#0b1a2a;
-  color:white;
-  font-family:Arial,sans-serif;
-  text-align:center;
-  padding:20px;
-  margin:0;
-}
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:10px;
-}
-.box{
-  background:#1b2b3a;
-  border:1px solid #555;
-  padding:8px 12px;
-  border-radius:6px;
-  font-size:16px;
-}
-.lang button{
-  background:none;
-  border:none;
-  color:white;
-  cursor:pointer;
-  padding:4px 8px;
-  font-size:14px;
-}
-.lang button.active{
-  background:#3a7bd5;
-  border-radius:4px;
-}
-
+body{background:#0b1a2a;color:white;font-family:Arial,sans-serif;text-align:center;padding:20px;margin:0;}
+.top{display:flex;justify-content:space-between;margin-bottom:10px;}
+.box{background:#1b2b3a;border:1px solid #555;padding:8px 12px;border-radius:6px;font-size:16px;}
+.lang button{background:none;border:none;color:white;cursor:pointer;padding:4px 8px;font-size:14px;}
+.lang button.active{background:#3a7bd5;border-radius:4px;}
 h1{margin:10px 0 14px;font-size:26px}
 #timer{font-size:28px;font-weight:bold;margin-bottom:16px;}
-
-button{
-  cursor:pointer;
-  border:none;
-  border-radius:6px;
-  font-size:18px;
-  padding:10px 18px;
-  background:#3a7bd5;
-  color:white;
-}
-
+button{cursor:pointer;border:none;border-radius:6px;font-size:18px;padding:10px 18px;background:#3a7bd5;color:white;}
 #hintBtn{margin-bottom:12px;}
-#surrender, #playAgain{margin-top:12px;}
-
-.hints{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  margin-bottom:16px;
-}
-.hint-square{
-  width:90px;
-  height:90px;
-  border-radius:8px;
-  background:#1b2b3a;
-  border:1px solid #555;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:16px;
-  flex-direction:column;
-  transition:0.5s;
-}
-.hint-square.used{
-  background:#6aaa64;
-  color:white;
-}
-
-.input-container{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:8px;
-  margin-bottom:16px;
-}
-input{
-  width:220px;
-  padding:12px;
-  font-size:16px;
-  background:#1b2b3a;
-  color:white;
-  border:2px solid #555;
-  border-radius:6px;
-}
-#guessBtn{
-  background:#3a7bd5;
-  color:white;
-  border:none;
-  padding:12px 18px;
-  font-size:16px;
-  border-radius:6px;
-}
-
-.auto{
-  position:absolute;
-  background:#1b2b3a;
-  border:1px solid #555;
-  display:none;
-  z-index:5;
-  border-radius:6px;
-  text-align:left;
-}
-.auto div{
-  padding:8px;
-  cursor:pointer;
-}
+#surrender,#playAgain{margin-top:12px;display:none;}
+.hints{display:flex;justify-content:center;gap:12px;margin-bottom:16px;}
+.hint-square{width:90px;height:90px;border-radius:8px;background:#1b2b3a;border:1px solid #555;display:flex;align-items:center;justify-content:center;font-size:16px;flex-direction:column;transition:0.5s;}
+.hint-square.used{background:#6aaa64;color:white;}
+.input-container{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:16px;}
+input{width:220px;padding:12px;font-size:16px;background:#1b2b3a;color:white;border:2px solid #555;border-radius:6px;}
+#guessBtn{background:#3a7bd5;color:white;border:none;padding:12px 18px;font-size:16px;border-radius:6px;}
+.auto{position:absolute;background:#1b2b3a;border:1px solid #555;display:none;z-index:5;border-radius:6px;text-align:left;}
+.auto div{padding:8px;cursor:pointer;}
 .auto div:hover{background:#3a7bd5}
-
-.board{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
-  margin-top:14px;
-}
-.grid{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  margin-bottom:12px;
-}
-.square{
-  width:90px;
-  height:90px;
-  border-radius:8px;
-  font-size:16px;
-  font-weight:bold;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:4px;
-  word-break:break-word;
-  border:1px solid #555;
-  opacity:0;
-  transform:scale(0.85);
-  animation:reveal .35s ease forwards;
-}
-.label{ background:#1b2b3a; }
+.board{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:14px;}
+.grid{display:flex;justify-content:center;gap:12px;margin-bottom:12px;}
+.square{width:90px;height:90px;border-radius:8px;font-size:16px;font-weight:bold;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;word-break:break-word;border:1px solid #555;opacity:1;}
+.square.reveal{opacity:0;transform:scale(0.85);animation:reveal .35s ease forwards;}
+.label{background:#1b2b3a;}
 .green{background:#6aaa64;color:white;}
 .red{background:#d9534f;color:white;}
 .orange{background:#f0ad4e;color:white;}
-.col{ display:flex; flex-direction:column; align-items:center; gap:3px; }
-
-@keyframes reveal{
-  to{opacity:1; transform:scale(1);}
-}
+.col{display:flex;flex-direction:column;align-items:center;gap:3px;}
+@keyframes reveal{to{opacity:1;transform:scale(1);}}
 </style>
 </head>
 <body>
-
 <div class="top">
   <div class="box" id="streak"></div>
   <div class="box lang">
@@ -185,8 +60,8 @@ input{
   <input id="guessInput" autocomplete="off">
   <button id="guessBtn">Угадать</button>
 </div>
-<div id="auto" class="auto"></div>
 
+<div id="auto" class="auto"></div>
 <div id="attempts"></div>
 
 <div class="board">
@@ -199,20 +74,8 @@ input{
 
 <script>
 const T={
-ru:{
-  labels:["Страна","Тир","Редкость","Класс","Год","Водоизмещение","Длина","Ширина"],
-  guess:"Угадать", again:"Играть снова", attempts:"Попыток осталось",
-  win:"🎉 Ты угадал за", lose:"⛔ Корабль был",
-  hints:["Тир","Редкость","Класс"], hintBtn:"Подсказка 💡",
-  streak:"🔥 Серия", surrender:"Сдаться"
-},
-en:{
-  labels:["Country","Tier","Rarity","Class","Year","Displacement","Length","Width"],
-  guess:"Guess", again:"Play again", attempts:"Attempts left",
-  win:"🎉 You guessed in", lose:"⛔ Ship was",
-  hints:["Tier","Rarity","Class"], hintBtn:"Hint 💡",
-  streak:"🔥 Streak", surrender:"Surrender"
-}
+ru:{labels:["Страна","Тир","Редкость","Класс","Год","Водоизмещение","Длина","Ширина"],guess:"Угадать",again:"Играть снова",attempts:"Попыток осталось",win:"🎉 Ты угадал за",lose:"⛔ Корабль был",hints:["Тир","Редкость","Класс"],hintBtn:"Подсказка 💡",streak:"🔥 Серия",surrender:"Сдаться"},
+en:{labels:["Country","Tier","Rarity","Class","Year","Displacement","Length","Width"],guess:"Guess",again:"Play again",attempts:"Attempts left",win:"🎉 You guessed in",lose:"⛔ Ship was",hints:["Tier","Rarity","Class"],hintBtn:"Hint 💡",streak:"🔥 Streak",surrender:"Surrender"}
 };
 
 const ships=[
@@ -221,15 +84,14 @@ const ships=[
 {name:"Yamato",country:{ru:"Япония",en:"Japan"},tier:10,rarity:{ru:"Легендарная",en:"Legendary"},class:{ru:"Линкор",en:"Battleship"},year:1941,displacement:72000,length:263,width:38}
 ];
 
-let lang="ru";
-let secret, attempts=6, guesses=[], hintCount=0;
-let streak=Number(localStorage.getItem("streak")||0);
-let startTime=null, timerInt=null;
+let lang="ru",secret,attempts=6,guesses=[],hintCount=0,streak=Number(localStorage.getItem("streak")||0),startTime=null,timerInt=null;
 const $=id=>document.getElementById(id);
 
-function fmt(ms){ const s=Math.floor(ms/1000); return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"); }
+function fmt(ms){const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
+function cmp(v,c,num=false){let col="red",i="❌";if(v===c){col="green";i="✅";}else if(num){col="orange";i=v>c?"⬇️":"⬆️";}return {v,col,i};}
 
-function render(){
+// Рендер игры
+function render(skipAnimation=false){
   $("labels").innerHTML="";
   T[lang].labels.forEach(l=>{
     const d=document.createElement("div");
@@ -237,6 +99,7 @@ function render(){
     d.textContent=l;
     $("labels").appendChild(d);
   });
+
   $("attempts").textContent=T[lang].attempts+": "+attempts;
   $("guessBtn").textContent=T[lang].guess;
   $("hintBtn").textContent=T[lang].hintBtn;
@@ -244,10 +107,9 @@ function render(){
   $("surrender").textContent=T[lang].surrender;
   $("playAgain").textContent=T[lang].again;
 
-  // History with animation
   $("history").innerHTML="";
-  guesses.forEach(ship=>{
-    const row=document.createElement("div"); row.className="grid";
+  guesses.forEach((ship,idx)=>{
+    const row=document.createElement("div");row.className="grid";
     [
       cmp(ship.country[lang],secret.country[lang]),
       cmp(ship.tier,secret.tier,true),
@@ -258,97 +120,110 @@ function render(){
       cmp(ship.length,secret.length,true),
       cmp(ship.width,secret.width,true)
     ].forEach((c,i)=>{
-      const col=document.createElement("div"); col.className="col";
-      col.innerHTML=`<div class="square ${c.col}" style="animation-delay:${i*150}ms">${c.v} ${c.i}</div>`; 
-      row.appendChild(col);
+      const col=document.createElement("div");col.className="col";
+      const sq=document.createElement("div");sq.className="square "+c.col;
+      sq.innerHTML=c.v+" "+c.i;
+      // Анимация только для последнего ряда и если не пропущено
+      if(idx===guesses.length-1 && !skipAnimation) sq.classList.add("reveal");
+      col.appendChild(sq);row.appendChild(col);
     });
     $("history").appendChild(row);
   });
+
   const keys=["tier","rarity","class"];
-document.querySelectorAll(".hint-square").forEach((sq,i)=>{
-  if(i<hintCount){
-    let value;
-    if(keys[i]==="tier") value = secret.tier; // числовое поле
-    else value = secret[keys[i]][lang];      // мультиязычные поля
-    sq.textContent=T[lang].hints[i]+": "+value;
-    sq.classList.add("used");
-  } else {
-    sq.textContent="💡"; 
-    sq.classList.remove("used");
-  }
-});
+  document.querySelectorAll(".hint-square").forEach((sq,i)=>{
+    if(i<hintCount){let value=keys[i]==="tier"?secret.tier:secret[keys[i]][lang];sq.textContent=T[lang].hints[i]+": "+value;sq.classList.add("used");}
+    else{sq.textContent="💡";sq.classList.remove("used");}
+  });
 }
 
-function cmp(v,c,num=false){ let col="red",i="❌"; if(v===c){col="green";i="✅";} else if(num){col="orange";i=v>c?"⬇️":"⬆️";} return {v,col,i}; }
+// Анимация последнего ряда с вызовом завершения игры
+function animateLastRow(callback){
+  const lastRow=$("history").lastElementChild;
+  if(!lastRow){callback(); return;}
+  const squares=Array.from(lastRow.querySelectorAll(".square"));
+  squares.forEach((sq,i)=>{
+    sq.style.opacity=0;
+    sq.style.transform="scale(0.85)";
+    setTimeout(()=>{
+      sq.classList.add("reveal");
+      if(i===squares.length-1){
+        setTimeout(callback,350); // ждём завершения последней анимации
+      }
+    }, i*150);
+  });
+}
 
-function startTimer(){ if(startTime)return; startTime=Date.now(); timerInt=setInterval(()=>{$("timer").textContent=fmt(Date.now()-startTime)},1000); }
+// Таймер
+function startTimer(){if(startTime)return;startTime=Date.now();timerInt=setInterval(()=>{$("timer").textContent=fmt(Date.now()-startTime)},1000);}
 function stopTimer(){clearInterval(timerInt);}
 
+// Проверка попытки
 $("guessBtn").onclick=()=>{
-  if(attempts<=0)return;
-  startTimer(); $("surrender").style.display="inline-block";
+  if(attempts<=0) return;
+  startTimer();$("surrender").style.display="inline-block";
   const name=$("guessInput").value.trim().toLowerCase();
-  const ship=ships.find(s=>s.name.toLowerCase()===name); if(!ship)return;
+  const ship=ships.find(s=>s.name.toLowerCase()===name); if(!ship) return;
   attempts--; guesses.push(ship); $("guessInput").value=""; $("auto").style.display="none";
-
-  if(ship.name===secret.name){
-    stopTimer(); const t=Date.now()-startTime; alert(T[lang].win+" "+fmt(t));
-    streak++; localStorage.setItem("streak",streak);
-    $("playAgain").style.display="inline-block"; $("surrender").style.display="none"; attempts=0;
-  } else if(attempts===0){
-    stopTimer(); alert(T[lang].lose+" "+secret.name);
-    streak=0; localStorage.setItem("streak",0);
-    $("playAgain").style.display="inline-block"; $("surrender").style.display="none";
-  }
-  render();
+  render(true); // предварительно рендерим без анимации
+  animateLastRow(()=>{
+    // После анимации последнего ряда
+    if(ship.name===secret.name){
+      stopTimer(); streak++; localStorage.setItem("streak",streak); attempts=0;
+      alert(T[lang].win+" "+fmt(Date.now()-startTime));
+      $("playAgain").style.display="inline-block"; $("surrender").style.display="none";
+    } else if(attempts===0){
+      stopTimer(); streak=0; localStorage.setItem("streak",0);
+      alert(T[lang].lose+" "+secret.name);
+      $("playAgain").style.display="inline-block"; $("surrender").style.display="none";
+    }
+  });
 };
 
-$("hintBtn").onclick=()=>{
-  if(hintCount>=3) return;
-  hintCount++; render();
-};
+// Подсказки
+$("hintBtn").onclick=()=>{if(hintCount>=3)return;hintCount++;render();};
 
+// Сдаться
 $("surrender").onclick=()=>{
-  stopTimer(); alert(T[lang].lose+" "+secret.name);
-  streak=0; localStorage.setItem("streak",0);
-  $("playAgain").style.display="inline-block"; $("surrender").style.display="none"; attempts=0;
-  render();
+  stopTimer(); streak=0; localStorage.setItem("streak",0); attempts=0;
+  render(true);
+  animateLastRow(()=>{alert(T[lang].lose+" "+secret.name);$("playAgain").style.display="inline-block";$("surrender").style.display="none";});
 };
 
+// Автодополнение
 $("guessInput").oninput=()=>{
   const v=$("guessInput").value.toLowerCase(); $("auto").innerHTML="";
   if(!v){$("auto").style.display="none";return;}
   ships.filter(s=>s.name.toLowerCase().startsWith(v)).forEach(s=>{
     const d=document.createElement("div"); d.textContent=s.name;
-    d.onclick=()=>{$("guessInput").value=s.name;$("auto").style.display="none";}
+    d.onclick=()=>{$("guessInput").value=s.name;$("auto").style.display="none";};
     $("auto").appendChild(d);
   });
-  if($("auto").children.length){
-    $("auto").style.display="block";
-    const rect=$("guessInput").getBoundingClientRect();
-    $("auto").style.top=(rect.bottom+4+window.scrollY)+"px";
-    $("auto").style.left=(rect.left+window.scrollX)+"px";
-    $("auto").style.width=rect.width+"px";
-  } else $("auto").style.display="none";
+  if($("auto").children.length){$("auto").style.display="block";const r=$("guessInput").getBoundingClientRect();$("auto").style.top=(r.bottom+4+window.scrollY)+"px";$("auto").style.left=(r.left+window.scrollX)+"px";$("auto").style.width=r.width+"px";}
+  else $("auto").style.display="none";
 };
 
+// Смена языка
 document.querySelectorAll(".lang button").forEach(b=>{
   b.onclick=()=>{
     document.querySelectorAll(".lang button").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active"); lang=b.dataset.lang; render();
+    b.classList.add("active");
+    lang=b.dataset.lang;
+    render(true); // рендер без повторной анимации
   };
 });
 
+// Играть снова
 $("playAgain").onclick=start;
+
+// Старт игры
 function start(){
   secret=ships[Math.floor(Math.random()*ships.length)];
   attempts=6; guesses=[]; hintCount=0;
   $("playAgain").style.display="none"; $("surrender").style.display="none";
-  startTime=null; stopTimer();
-  $("timer").textContent="00:00";
+  startTime=null; stopTimer(); $("timer").textContent="00:00";
   render();
 }
-
 start();
 </script>
 </body>
