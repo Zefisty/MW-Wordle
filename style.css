@@ -1,19 +1,23 @@
-body {
-  background: url('background.jpg') no-repeat center center fixed;
+/* Фон весь с blur */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('background.jpg') no-repeat center center;
   background-size: cover;
+  filter: blur(5px);
+  z-index: -1;
+}
+
+body {
   color: white;
   font-family: Arial,sans-serif;
   text-align: center;
   padding: 20px;
   margin: 0;
-  backdrop-filter: blur(5px); /* blur фона */
 }
 
-.top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
+.top { display: flex; justify-content: space-between; margin-bottom: 10px; }
 
 .box {
   background: rgba(27,43,58,0.9);
@@ -37,16 +41,8 @@ body {
   border-radius: 4px;
 }
 
-h1 {
-  margin: 10px 0 14px;
-  font-size: 26px;
-}
-
-#timer {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 16px;
-}
+h1 { margin: 10px 0 14px; font-size: 26px; }
+#timer { font-size: 28px; font-weight: bold; margin-bottom: 16px; }
 
 button {
   cursor: pointer;
@@ -58,14 +54,8 @@ button {
   color: white;
 }
 
-#hintBtn {
-  margin-bottom: 12px;
-}
-
-#surrender, #playAgain {
-  margin-top: 12px;
-  display: none;
-}
+#hintBtn { margin-bottom: 12px; }
+#surrender, #playAgain { margin-top: 12px; display: none; }
 
 .hints {
   display: flex;
@@ -75,8 +65,7 @@ button {
 }
 
 .hint-square {
-  width: 90px;
-  height: 90px;
+  width: 90px; height: 90px;
   border-radius: 8px;
   background: rgba(27,43,58,0.9);
   border: 2px solid #555;
@@ -88,20 +77,12 @@ button {
   transition: 0.5s;
 }
 
-.hint-square.used {
-  background: #6aaa64;
-  color: white;
-}
+.hint-square.used { background: #6aaa64; color: white; }
 
-.input-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 8px;
-}
+.input-container { display: flex; justify-content: center; margin-bottom: 8px; }
 
 #guessInput {
-  width: 300px;
-  padding: 14px;
+  width: 300px; padding: 14px;
   font-size: 16px;
   background: rgba(27,43,58,0.9);
   color: white;
@@ -110,9 +91,7 @@ button {
   text-align: center;
 }
 
-#guessInput::placeholder {
-  color: #aaa;
-}
+#guessInput::placeholder { color: #aaa; }
 
 .auto {
   position: absolute;
@@ -125,84 +104,31 @@ button {
   z-index: 5;
 }
 
-.auto div {
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background 0.2s;
-}
+.auto div { padding: 8px; cursor: pointer; border-radius: 8px; transition: background 0.2s; }
+.auto div:hover { background: #3a7bd5; }
 
-.auto div:hover {
-  background: #3a7bd5;
-}
-
-.board {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  margin-top: 14px;
-}
-
-.grid {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
+.board { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 14px; }
+.grid { display: flex; justify-content: center; gap: 12px; margin-bottom: 12px; }
 
 .square {
-  width: 90px;
-  height: 90px;
+  width: 90px; height: 90px;
   border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  word-break: break-word;
-  border: 2px solid #555;
-  opacity: 1;
-  transition: 0.3s;
+  font-size: 16px; font-weight: bold;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 4px; word-break: break-word;
+  border: 2px solid #555; opacity: 1; transition: 0.3s;
 }
 
-.square.reveal {
-  opacity: 0;
-  transform: scale(0.85);
-  animation: reveal .35s ease forwards;
-}
+.square.reveal { opacity: 0; transform: scale(0.85); animation: reveal .35s ease forwards; }
+.label { background: rgba(27,43,58,0.9); }
 
-.label {
-  background: rgba(27,43,58,0.9);
-}
+.green { background: #6aaa64; color: white; }
+.red { background: #d9534f; color: white; }
+.orange { background: #f0ad4e; color: white; }
 
-.green {
-  background: #6aaa64;
-  color: white;
-}
+.col { display: flex; flex-direction: column; align-items: center; gap: 3px; }
 
-.red {
-  background: #d9534f;
-  color: white;
-}
+@keyframes reveal { to { opacity: 1; transform: scale(1); } }
 
-.orange {
-  background: #f0ad4e;
-  color: white;
-}
-
-.col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-}
-
-@keyframes reveal {
-  to {opacity: 1; transform: scale(1);}
-}
-
-/* Отступы */
-#attempts, .input-container, #surrender, #playAgain, .hints {margin-top: 6px;}
+#attempts, .input-container, #surrender, #playAgain, .hints { margin-top: 6px; }
