@@ -1,6 +1,6 @@
 const T = {
   ru: {
-    labels:["Страна","Тир","Редкость","Класс","Год","Водоизмещение","Длина","Ширина"],
+    labels:["Название","Страна","Тир","Редкость","Класс","Год","Водоизмещение","Длина","Ширина"],
     attempts:"Попыток осталось",
     win:"🎉 Ты угадал за",
     lose:"⛔ Корабль был",
@@ -11,7 +11,7 @@ const T = {
     again:"Играть снова"
   },
   en: {
-    labels:["Country","Tier","Rarity","Class","Year","Displacement","Length","Width"],
+    labels:["Name","Country","Tier","Rarity","Class","Year","Displacement","Length","Width"],
     attempts:"Attempts left",
     win:"🎉 You guessed in",
     lose:"⛔ Ship was",
@@ -45,6 +45,10 @@ function render(skipAnimation=false){
   $("history").innerHTML="";
   guesses.forEach((ship,idx)=>{
     const row=document.createElement("div"); row.className="grid";
+    // добавляем название корабля в начало каждого ряда
+    const nameCol=document.createElement("div"); nameCol.className="col"; 
+    const nameSq=document.createElement("div"); nameSq.className="square label"; 
+    nameSq.textContent = ship.name; nameCol.appendChild(nameSq); row.appendChild(nameCol);
     [
       cmp(ship.country[lang],secret.country[lang]),
       cmp(ship.tier,secret.tier,true),
@@ -93,7 +97,7 @@ $("guessInput").oninput=()=>{
   const v=$("guessInput").value.toLowerCase(); $("auto").innerHTML="";
   if(!v){$("auto").style.display="none"; return;}
   ships.filter(s=>s.name.toLowerCase().startsWith(v)).forEach(s=>{ const d=document.createElement("div"); d.textContent=s.name; d.onclick=()=>guessShip(s.name); $("auto").appendChild(d); });
-  if($("auto").children.length){ const r=$("guessInput").getBoundingClientRect(); $("auto").style.top=(r.bottom+6+window.scrollY)+"px"; $("auto").style.left=(r.left+window.scrollX)+"px"; $("auto").style.width=r.width+"px"; $("auto").style.display="block"; } else $("auto").style.display="none";
+  if($("auto").children.length){ const r=$("guessInput").getBoundingClientRect(); $("auto").style.top=(r.bottom+6+window.scrollY)+"px"; $("auto").style.left=(r.left+window.scrollX)+"px"; $("auto").style.width=(r.width)+"px"; $("auto").style.display="block"; } else $("auto").style.display="none";
 };
 
 $("hintBtn").onclick=()=>{if(hintCount>=3)return; hintCount++; render(true);}
@@ -106,6 +110,7 @@ document.querySelectorAll(".lang button").forEach(b=>{ b.onclick=()=>{
   $("hintBtn").textContent=T[lang].hintBtn;
   $("playAgain").textContent=T[lang].again;
   $("surrender").textContent=T[lang].surrender;
+  $("streak").textContent=T[lang].streak+": "+streak;
   render(true);
 };});
 
