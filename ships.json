@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Zumwalt",
+    "country": { "ru": "США", "en": "USA" },
+    "tier": 10,
+    "rarity": { "ru": "Эпическая", "en": "Epic" },
+    "class": { "ru": "Эсминец", "en": "Destroyer" },
+    "year": 2013,
+    "displacement": 15000,
+    "length": 190,
+    "width": 24
+  },
+  {
+    "name": "Yamato",
+    "country": { "ru": "Япония", "en": "Japan" },
+    "tier": 10,
+    "rarity": { "ru": "Легендарная", "en": "Legendary" },
+    "class": { "ru": "Линкор", "en": "Battleship" },
+    "year": 1941,
+    "displacement": 72000,
+    "length": 263,
+    "width": 38
+  },
+  {
+    "name": "Admiral Gorshkov",
+    "country": { "ru": "Россия", "en": "Russia" },
+    "tier": 9,
+    "rarity": { "ru": "Редкая", "en": "Rare" },
+    "class": { "ru": "Фрегат", "en": "Frigate" },
+    "year": 2018,
+    "displacement": 14000,
+    "length": 186,
+    "width": 24
+  },
+  {
+    "name": "Arleigh Burke",
+    "country": { "ru": "США", "en": "USA" },
+    "tier": 9,
+    "rarity": { "ru": "Редкая", "en": "Rare" },
+    "class": { "ru": "Эсминец", "en": "Destroyer" },
+    "year": 1991,
+    "displacement": 9700,
+    "length": 155,
+    "width": 20
+  },
+  {
+    "name": "Type 055",
+    "country": { "ru": "Китай", "en": "China" },
+    "tier": 10,
+    "rarity": { "ru": "Эпическая", "en": "Epic" },
+    "class": { "ru": "Эсминец", "en": "Destroyer" },
+    "year": 2020,
+    "displacement": 13000,
+    "length": 180,
+    "width": 20
+  },
+  {
+    "name": "Bismarck",
+    "country": { "ru": "Германия", "en": "Germany" },
+    "tier": 8,
+    "rarity": { "ru": "Редкая", "en": "Rare" },
+    "class": { "ru": "Линкор", "en": "Battleship" },
+    "year": 1939,
+    "displacement": 50000,
+    "length": 251,
+    "width": 36
+  },
+  {
+    "name": "Kirov",
+    "country": { "ru": "Россия", "en": "Russia" },
+    "tier": 10,
+    "rarity": { "ru": "Легендарная", "en": "Legendary" },
+    "class": { "ru": "Крейсер", "en": "Cruiser" },
+    "year": 1980,
+    "displacement": 28000,
+    "length": 252,
+    "width": 28
+  },
+  {
+    "name": "Hood",
+    "country": { "ru": "Великобритания", "en": "UK" },
+    "tier": 8,
+    "rarity": { "ru": "Редкая", "en": "Rare" },
+    "class": { "ru": "Линейный крейсер", "en": "Battlecruiser" },
+    "year": 1920,
+    "displacement": 42000,
+    "length": 262,
+    "width": 32
+  },
+  {
+    "name": "Iowa",
+    "country": { "ru": "США", "en": "USA" },
+    "tier": 9,
+    "rarity": { "ru": "Эпическая", "en": "Epic" },
+    "class": { "ru": "Линкор", "en": "Battleship" },
+    "year": 1943,
+    "displacement": 58000,
+    "length": 270,
+    "width": 33
+  },
+  {
+    "name": "FREMM",
+    "country": { "ru": "Франция", "en": "France" },
+    "tier": 8,
+    "rarity": { "ru": "Обычная", "en": "Common" },
+    "class": { "ru": "Фрегат", "en": "Frigate" },
+    "year": 2012,
+    "displacement": 6700,
+    "length": 142,
+    "width": 20
+  }
+]
