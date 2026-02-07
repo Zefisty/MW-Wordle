@@ -6,6 +6,7 @@ body {
   text-align: center;
   padding: 20px;
   margin: 0;
+  backdrop-filter: blur(5px); /* blur фона */
 }
 
 .top {
@@ -15,7 +16,7 @@ body {
 }
 
 .box {
-  background: #1b2b3a;
+  background: rgba(27,43,58,0.9);
   border: 2px solid #555;
   padding: 8px 12px;
   border-radius: 6px;
@@ -77,7 +78,7 @@ button {
   width: 90px;
   height: 90px;
   border-radius: 8px;
-  background: #1b2b3a;
+  background: rgba(27,43,58,0.9);
   border: 2px solid #555;
   display: flex;
   align-items: center;
@@ -102,7 +103,7 @@ button {
   width: 300px;
   padding: 14px;
   font-size: 16px;
-  background: #1b2b3a;
+  background: rgba(27,43,58,0.9);
   color: white;
   border: 2px solid #555;
   border-radius: 8px;
@@ -115,7 +116,7 @@ button {
 
 .auto {
   position: absolute;
-  background: #1b2b3a;
+  background: rgba(27,43,58,0.9);
   border: 2px solid #555;
   border-radius: 8px;
   text-align: left;
@@ -174,7 +175,7 @@ button {
 }
 
 .label {
-  background: #1b2b3a;
+  background: rgba(27,43,58,0.9);
 }
 
 .green {
@@ -203,7 +204,5 @@ button {
   to {opacity: 1; transform: scale(1);}
 }
 
-/* Отступы между элементами */
-#attempts, .input-container, #surrender, #playAgain, .hints {
-  margin-top: 6px;
-}
+/* Отступы */
+#attempts, .input-container, #surrender, #playAgain, .hints {margin-top: 6px;}
