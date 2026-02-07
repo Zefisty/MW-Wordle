@@ -87,11 +87,23 @@ ru:{labels:["Страна","Тир","Редкость","Класс","Год","В
 en:{labels:["Country","Tier","Rarity","Class","Year","Displacement","Length","Width"],attempts:"Attempts left",win:"🎉 You guessed in",lose:"⛔ Ship was",hints:["Tier","Rarity","Class"],hintBtn:"Hint 💡",streak:"🔥 Streak",surrender:"Surrender",again:"Play again"}
 };
 
-const ships=[
-{name:"Zumwalt",country:{ru:"США",en:"USA"},tier:10,rarity:{ru:"Эпическая",en:"Epic"},class:{ru:"Эсминец",en:"Destroyer"},year:2013,displacement:15000,length:190,width:24},
-{name:"Gorshkov",country:{ru:"Россия",en:"Russia"},tier:9,rarity:{ru:"Редкая",en:"Rare"},class:{ru:"Фрегат",en:"Frigate"},year:2018,displacement:14000,length:186,width:24},
-{name:"Yamato",country:{ru:"Япония",en:"Japan"},tier:10,rarity:{ru:"Легендарная",en:"Legendary"},class:{ru:"Линкор",en:"Battleship"},year:1941,displacement:72000,length:263,width:38}
-];
+let ships = [];
+let dataLoaded = false;
+
+fetch("ships.json")
+  .then(res => {
+    if (!res.ok) throw new Error("ships.json not found");
+    return res.json();
+  })
+  .then(data => {
+    ships = data;
+    dataLoaded = true;
+    start(); // запускаем игру ТОЛЬКО после загрузки данных
+  })
+  .catch(err => {
+    alert("Ошибка загрузки базы кораблей");
+    console.error(err);
+  });
 
 let lang="ru",secret,attempts=6,guesses=[],hintCount=0,streak=Number(localStorage.getItem("streak")||0),startTime=null,timerInt=null,firstGuessMade=false;
 const $=id=>document.getElementById(id);
@@ -249,3 +261,4 @@ start();
 </script>
 </body>
 </html>
+
