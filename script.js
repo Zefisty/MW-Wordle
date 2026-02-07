@@ -14,14 +14,11 @@ let lang="ru",secret,attempts=6,guesses=[],hintCount=0,streak=Number(localStorag
 const $=id=>document.getElementById(id);
 
 function fmt(ms){const s=Math.floor(ms/1000); return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
-
 function cmp(v,c,num=false){let col="red",i="❌"; if(v===c){col="green"; i="✅";} else if(num){col="orange"; i=v>c?"⬇️":"⬆️";} return {v,col,i};}
 
 function render(skip=false){
   $("labels").innerHTML="";
-  T[lang].labels.forEach(l=>{
-    const d=document.createElement("div"); d.className="square label"; d.textContent=l; $("labels").appendChild(d);
-  });
+  T[lang].labels.forEach(l=>{const d=document.createElement("div"); d.className="square label"; d.textContent=l; $("labels").appendChild(d);});
   $("attempts").textContent=T[lang].attempts+": "+attempts;
   $("streak").textContent=T[lang].streak+": "+streak;
 
@@ -39,12 +36,7 @@ function render(skip=false){
       cmp(ship.length,secret.length,true),
       cmp(ship.width,secret.width,true)
     ];
-    details.forEach(c=>{
-      const col=document.createElement("div"); col.className="col";
-      const sq=document.createElement("div"); sq.className="square "+c.col; sq.textContent=c.v+" "+c.i;
-      if(idx===guesses.length-1 && !skip) sq.classList.add("reveal");
-      col.appendChild(sq); row.appendChild(col);
-    });
+    details.forEach(c=>{const col=document.createElement("div"); col.className="col"; const sq=document.createElement("div"); sq.className="square "+c.col; sq.textContent=c.v+" "+c.i; if(idx===guesses.length-1 && !skip) sq.classList.add("reveal"); col.appendChild(sq); row.appendChild(col);});
     $("history").appendChild(row);
   });
 
@@ -71,7 +63,7 @@ function guessShip(name){
   render(true);
   animateLastRow(()=>{
     if(ship.name===secret.name){stopTimer(); streak++; localStorage.setItem("streak",streak); attempts=0; gameOver=true; $("surrender").style.display="none"; $("playAgain").style.display="inline-block"; alert(T[lang].win+" "+fmt(Date.now()-startTime));}
-    else if(attempts===0){stopTimer(); streak=0; localStorage.setItem("streak",0); gameOver=true; $("surrender").style.display="none"; $("playAgain").style.display="inline-block"; alert(T[lang].lose+" "+secret.name);}
+    else if(attempts===0){stopTimer(); streak=0; localStorage.setItem("streak",0); attempts=0; gameOver=true; $("surrender").style.display="none"; $("playAgain").style.display="inline-block"; alert(T[lang].lose+" "+secret.name);}
   });
 }
 
