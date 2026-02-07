@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modern Warships Wordle</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern Warships Wordle</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div class="top">
   <div class="box" id="streak">🔥 Серия: 0</div>
   <div class="box lang">
@@ -22,15 +21,14 @@
 <button id="hintBtn">Подсказка 💡</button>
 
 <div class="hints">
-  <div class="hint-square">💡</div>
-  <div class="hint-square">💡</div>
-  <div class="hint-square">💡</div>
+  <div class="hint-square" data-index="0">💡</div>
+  <div class="hint-square" data-index="1">💡</div>
+  <div class="hint-square" data-index="2">💡</div>
 </div>
 
 <div class="input-container">
   <input id="guessInput" placeholder="Напиши название корабля" autocomplete="off">
 </div>
-
 <div id="auto" class="auto"></div>
 <div id="attempts"></div>
 
@@ -39,7 +37,7 @@
   <div id="history"></div>
 </div>
 
-<div class="buttons">
+<div style="margin-top:12px;">
   <button id="surrender">Сдаться</button>
   <button id="playAgain">Играть снова</button>
 </div>
@@ -47,5 +45,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
-
