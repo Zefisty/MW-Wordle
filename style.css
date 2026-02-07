@@ -35,8 +35,16 @@ body{
   border-radius:4px;
 }
 
-h1{margin:10px 0 14px;font-size:26px}
-#timer{font-size:28px;font-weight:bold;margin-bottom:16px;}
+h1{
+  margin:10px 0 14px;
+  font-size:26px;
+}
+
+#timer{
+  font-size:28px;
+  font-weight:bold;
+  margin-bottom:16px;
+}
 
 button{
   cursor:pointer;
@@ -49,7 +57,7 @@ button{
 }
 
 #hintBtn{margin-bottom:12px;}
-#surrender,#playAgain{display:none;margin-top:6px;}
+#surrender,#playAgain{margin-top:12px;display:none;}
 
 .hints{
   display:flex;
@@ -68,12 +76,20 @@ button{
   align-items:center;
   justify-content:center;
   font-size:16px;
+  flex-direction:column;
   transition:0.5s;
 }
 
-.hint-square.used{background:#6aaa64;color:white;}
+.hint-square.used{
+  background:#6aaa64;
+  color:white;
+}
 
-.input-container{display:flex;justify-content:center;margin-bottom:6px;}
+.input-container{
+  display:flex;
+  justify-content:center;
+  margin-bottom:8px;
+}
 
 #guessInput{
   width:300px;
@@ -86,11 +102,15 @@ button{
   text-align:center;
 }
 
+#guessInput::placeholder{color:#aaa;}
+
 .auto{
   position:absolute;
   background:#1b2b3a;
   border:2px solid #555;
   border-radius:8px;
+  text-align:left;
+  overflow:hidden;
   display:none;
   z-index:5;
 }
@@ -99,11 +119,18 @@ button{
   padding:8px;
   cursor:pointer;
   border-radius:8px;
+  transition:background 0.2s;
 }
 
 .auto div:hover{background:#3a7bd5;}
 
-.board{margin-top:14px;}
+.board{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  margin-top:14px;
+}
 
 .grid{
   display:flex;
@@ -119,21 +146,36 @@ button{
   font-size:16px;
   font-weight:bold;
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
+  padding:4px;
+  word-break:break-word;
   border:2px solid #555;
+  opacity:1;
 }
-
-.green{background:#6aaa64;}
-.red{background:#d9534f;}
-.orange{background:#f0ad4e;}
 
 .square.reveal{
   opacity:0;
   transform:scale(0.85);
-  animation:reveal .35s forwards;
+  animation:reveal .35s ease forwards;
+}
+
+.label{background:#1b2b3a;}
+.green{background:#6aaa64;color:white;}
+.red{background:#d9534f;color:white;}
+.orange{background:#f0ad4e;color:white;}
+
+.col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
 }
 
 @keyframes reveal{
   to{opacity:1;transform:scale(1);}
 }
+
+/* Отступы между элементами */
+#attempts, .input-container, #surrender, #playAgain, .hints{margin-top:6px;}
