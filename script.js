@@ -1,47 +1,26 @@
 const T={
-  ru:{labels:["Страна","Тир","Редкость","Класс","Год","Водоизмещение","Длина","Ширина"],attempts:"Попыток осталось",win:"🎉 Ты угадал за",lose:"⛔ Корабль был",hints:["Тир","Редкость","Класс"],hintBtn:"Подсказка 💡",streak:"🔥 Серия",surrender:"Сдаться",again:"Играть снова"},
-  en:{labels:["Country","Tier","Rarity","Class","Year","Displacement","Length","Width"],attempts:"Attempts left",win:"🎉 You guessed in",lose:"⛔ Ship was",hints:["Tier","Rarity","Class"],hintBtn:"Hint 💡",streak:"🔥 Streak",surrender:"Surrender",again:"Play again"}
+  ru:{labels:["Название","Страна","Тир","Редкость","Класс","Год","Водоизмещение","Длина","Ширина"],attempts:"Попыток осталось",win:"🎉 Ты угадал за",lose:"⛔ Корабль был",hints:["Тир","Редкость","Класс"],hintBtn:"Подсказка 💡",streak:"🔥 Серия",surrender:"Сдаться",again:"Играть снова"},
+  en:{labels:["Name","Country","Tier","Rarity","Class","Year","Displacement","Length","Width"],attempts:"Attempts left",win:"🎉 You guessed in",lose:"⛔ Ship was",hints:["Tier","Rarity","Class"],hintBtn:"Hint 💡",streak:"🔥 Streak",surrender:"Surrender",again:"Play again"}
 };
 
 let ships=[], dataLoaded=false;
 
 fetch("ships.json")
-  .then(res=>{
-    if(!res.ok) throw new Error("ships.json not found");
-    return res.json();
-  })
-  .then(data=>{
-    ships=data;
-    dataLoaded=true;
-    start();
-  })
-  .catch(err=>{
-    alert("Ошибка загрузки базы кораблей");
-    console.error(err);
-  });
+  .then(res=>{if(!res.ok) throw new Error("ships.json not found"); return res.json();})
+  .then(data=>{ships=data; dataLoaded=true; start();})
+  .catch(err=>{alert("Ошибка загрузки базы кораблей"); console.error(err);});
 
-let lang="ru",secret,attempts=6,guesses=[],hintCount=0,streak=Number(localStorage.getItem("streak")||0),startTime=null,timerInt=null,firstGuessMade=false;
+let lang="ru",secret,attempts=6,guesses=[],hintCount=0,streak=Number(localStorage.getItem("streak")||0),startTime=null,timerInt=null,firstGuessMade=false,gameOver=false;
 const $=id=>document.getElementById(id);
 
-function fmt(ms){
-  const s=Math.floor(ms/1000);
-  return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
-}
+function fmt(ms){const s=Math.floor(ms/1000); return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
 
-function cmp(v,c,num=false){
-  let col="red",i="❌";
-  if(v===c){col="green"; i="✅";}
-  else if(num){col="orange"; i=v>c?"⬇️":"⬆️";}
-  return {v,col,i};
-}
+function cmp(v,c,num=false){let col="red",i="❌"; if(v===c){col="green"; i="✅";} else if(num){col="orange"; i=v>c?"⬇️":"⬆️";} return {v,col,i};}
 
-function render(skipAnimation=false){
+function render(skip=false){
   $("labels").innerHTML="";
   T[lang].labels.forEach(l=>{
-    const d=document.createElement("div");
-    d.className="square label";
-    d.textContent=l;
-    $("labels").appendChild(d);
+    const d=document.createElement("div"); d.className="square label"; d.textContent=l; $("labels").appendChild(d);
   });
   $("attempts").textContent=T[lang].attempts+": "+attempts;
   $("streak").textContent=T[lang].streak+": "+streak;
@@ -49,8 +28,9 @@ function render(skipAnimation=false){
   $("history").innerHTML="";
   guesses.forEach((ship,idx)=>{
     const row=document.createElement("div"); row.className="grid";
-    [
-      cmp(ship.country[lang],secret.country[lang]),
+    const details=[
+      {v:ship.name,col:ship.name===secret.name?"green":"red",i:ship.name===secret.name?"✅":"❌"},
+      {v:ship.country[lang],col:cmp(ship.country[lang],secret.country[lang]).col,i:cmp(ship.country[lang],secret.country[lang]).i},
       cmp(ship.tier,secret.tier,true),
       cmp(ship.rarity[lang],secret.rarity[lang]),
       cmp(ship.class[lang],secret.class[lang]),
@@ -58,63 +38,30 @@ function render(skipAnimation=false){
       cmp(ship.displacement,secret.displacement,true),
       cmp(ship.length,secret.length,true),
       cmp(ship.width,secret.width,true)
-    ].forEach((c,i)=>{
+    ];
+    details.forEach(c=>{
       const col=document.createElement("div"); col.className="col";
-      const sq=document.createElement("div"); sq.className="square "+c.col;
-
-      // Добавляем имя корабля в квадраты угадывания
-      if(i===0 && idx>=0){
-        sq.textContent=ship.name + " " + (c.col==="green"?"✅":"❌");
-        sq.className="square "+c.col;
-      } else {
-        sq.innerHTML=c.v+" "+c.i;
-      }
-
-      if(idx===guesses.length-1 && !skipAnimation) sq.classList.add("reveal");
+      const sq=document.createElement("div"); sq.className="square "+c.col; sq.textContent=c.v+" "+c.i;
+      if(idx===guesses.length-1 && !skip) sq.classList.add("reveal");
       col.appendChild(sq); row.appendChild(col);
     });
     $("history").appendChild(row);
   });
 
-  // Хинты
   const keys=["tier","rarity","class"];
   document.querySelectorAll(".hint-square").forEach((sq,i)=>{
-    if(i<hintCount){
-      let value=keys[i]==="tier"?secret.tier:secret[keys[i]][lang];
-      sq.textContent=T[lang].hints[i]+": "+value;
-      sq.classList.add("used");
-    } else {
-      sq.textContent="💡";
-      sq.classList.remove("used");
-    }
+    if(i<hintCount){let value=keys[i]==="tier"?secret.tier:secret[keys[i]][lang]; sq.textContent=T[lang].hints[i]+": "+value; sq.classList.add("used");} 
+    else{sq.textContent="💡"; sq.classList.remove("used");}
   });
 }
 
-function animateLastRow(callback){
-  const lastRow=$("history").lastElementChild;
-  if(!lastRow){callback(); return;}
-  const squares=Array.from(lastRow.querySelectorAll(".square"));
-  squares.forEach((sq,i)=>{
-    sq.style.opacity=0;
-    sq.style.transform="scale(0.85)";
-    setTimeout(()=>{
-      sq.classList.add("reveal");
-      if(i===squares.length-1){
-        setTimeout(callback,350);
-      }
-    }, i*150);
-  });
-}
+function animateLastRow(cb){const last=$("history").lastElementChild; if(!last){cb();return;} Array.from(last.querySelectorAll(".square")).forEach((sq,i)=>{sq.style.opacity=0; sq.style.transform="scale(0.85)"; setTimeout(()=>{sq.classList.add("reveal"); if(i===last.querySelectorAll(".square").length-1) setTimeout(cb,350);}, i*150);});}
 
-function startTimer(){
-  if(startTime) return;
-  startTime = Date.now();
-  timerInt = setInterval(()=>{$("timer").textContent=fmt(Date.now()-startTime)},1000);
-}
-
+function startTimer(){if(startTime) return; startTime=Date.now(); timerInt=setInterval(()=>{$("timer").textContent=fmt(Date.now()-startTime)},1000);}
 function stopTimer(){clearInterval(timerInt);}
 
 function guessShip(name){
+  if(gameOver) return;
   const ship=ships.find(s=>s.name.toLowerCase()===name.toLowerCase());
   if(!ship) return;
 
@@ -123,20 +70,14 @@ function guessShip(name){
 
   render(true);
   animateLastRow(()=>{
-    if(ship.name===secret.name){
-      stopTimer(); streak++; localStorage.setItem("streak",streak); attempts=0;
-      $("surrender").style.display="none"; $("playAgain").style.display="inline-block";
-      alert(T[lang].win+" "+fmt(Date.now()-startTime));
-    } else if(attempts===0){
-      stopTimer(); streak=0; localStorage.setItem("streak",0);
-      $("surrender").style.display="none"; $("playAgain").style.display="inline-block";
-      alert(T[lang].lose+" "+secret.name);
-    }
+    if(ship.name===secret.name){stopTimer(); streak++; localStorage.setItem("streak",streak); attempts=0; gameOver=true; $("surrender").style.display="none"; $("playAgain").style.display="inline-block"; alert(T[lang].win+" "+fmt(Date.now()-startTime));}
+    else if(attempts===0){stopTimer(); streak=0; localStorage.setItem("streak",0); gameOver=true; $("surrender").style.display="none"; $("playAgain").style.display="inline-block"; alert(T[lang].lose+" "+secret.name);}
   });
 }
 
 // Автодополнение
 $("guessInput").oninput=()=>{
+  if(gameOver) return;
   const v=$("guessInput").value.toLowerCase(); $("auto").innerHTML="";
   if(!v){$("auto").style.display="none"; return;}
   ships.filter(s=>s.name.toLowerCase().startsWith(v)).forEach(s=>{
@@ -144,24 +85,12 @@ $("guessInput").oninput=()=>{
     d.onclick=()=>{guessShip(s.name);}
     $("auto").appendChild(d);
   });
-  if($("auto").children.length){
-    $("auto").style.display="block";
-    const r=$("guessInput").getBoundingClientRect();
-    $("auto").style.top=(r.bottom+6+window.scrollY)+"px";
-    $("auto").style.left=(r.left+window.scrollX)+"px";
-    $("auto").style.width=(r.width-4)+"px"; // убрали 4px справа
-  } else $("auto").style.display="none";
+  if($("auto").children.length){$("auto").style.display="block"; const r=$("guessInput").getBoundingClientRect(); $("auto").style.top=(r.bottom+6+window.scrollY)+"px"; $("auto").style.left=(r.left+window.scrollX)+"px"; $("auto").style.width=(r.width-4)+"px";}
+  else $("auto").style.display="none";
 };
 
-// Хинты
-$("hintBtn").onclick=()=>{if(hintCount>=3) return; hintCount++; render(true);};
-
-// Сдаться
-$("surrender").onclick=()=>{
-  stopTimer(); streak=0; localStorage.setItem("streak",0); attempts=0;
-  render(true); $("surrender").style.display="none"; $("playAgain").style.display="inline-block";
-  alert(T[lang].lose+" "+secret.name);
-};
+$("hintBtn").onclick=()=>{if(hintCount>=3) return; hintCount++; render(true);}
+$("surrender").onclick=()=>{if(gameOver) return; stopTimer(); streak=0; localStorage.setItem("streak",0); attempts=0; gameOver=true; render(true); $("surrender").style.display="none"; $("playAgain").style.display="inline-block"; alert(T[lang].lose+" "+secret.name);}
 
 // Смена языка
 document.querySelectorAll(".lang button").forEach(b=>{
@@ -182,8 +111,7 @@ $("playAgain").onclick=start;
 function start(){
   if(!dataLoaded) return;
   secret=ships[Math.floor(Math.random()*ships.length)];
-  attempts=6; guesses=[]; hintCount=0; firstGuessMade=false;
-  startTime=null; stopTimer(); $("timer").textContent="00:00";
-  $("playAgain").style.display="none"; $("surrender").style.display="none";
+  attempts=6; guesses=[]; hintCount=0; firstGuessMade=false; startTime=null; stopTimer(); $("timer").textContent="00:00";
+  $("playAgain").style.display="none"; $("surrender").style.display="none"; gameOver=false;
   render();
 }
