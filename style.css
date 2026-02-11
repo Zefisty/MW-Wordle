@@ -5,7 +5,7 @@ body::before {
   top: 0; left: 0; right: 0; bottom: 0;
   background: url('background.jpg') no-repeat center center;
   background-size: cover;
-  filter: blur(4px);
+  filter: blur(2px);
   z-index: -1;
 }
 
