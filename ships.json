@@ -1,7 +1,7 @@
 [
   {
     "name": "Zumwalt",
-    "country": { "ru": "🇺🇸", "en": "🇺🇸" },
+    "country": { "ru": "🇺🇸", "США": "USA" },
     "tier": 10,
     "rarity": { "ru": "Эпическая", "en": "Epic" },
     "class": { "ru": "Эсминец", "en": "Destroyer" },
